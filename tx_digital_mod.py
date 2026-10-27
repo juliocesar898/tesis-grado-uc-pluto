@@ -244,8 +244,13 @@ def main():
                 sdr.tx_destroy_buffer()
             except Exception:
                 pass
+            time.sleep(0.08)  # Pequeña pausa para que libiio libere los descriptores del DMA
             muestras = generar_rafaga_modulacion(nombre_mod, total_muestras=1024, sps=8)
-            sdr.tx(muestras)
+            try:
+                sdr.tx(muestras)
+            except Exception as e_tx:
+                time.sleep(0.15)
+                sdr.tx(muestras)
             print(f"\n🚀 [EMITIENDO AL AIRE] Modulación: >>> {nombre_mod} <<< en {args.freq/1e9:.3f} GHz")
             print("   (Observa en el Dashboard Web la clasificación y constelación en vivo)")
 
